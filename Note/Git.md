@@ -214,5 +214,101 @@
 
     远程就用gir revert
 
-    后面可以跟提交记录 也可以用HEAD 是这样吗
+    后面可以跟提交记录 也可以用HEAD
 
+- HEAD 指向分支和提交的指针有什么区别?
+
+  - HEAD 是一个特殊的指针，它指向当前所在的分支或提交。 当 HEAD 指向分支时，它指向该分支的最新提交，表示当前所在的分支。在这种情况下，如果进行提交，该分支将会移动到新的提交上，并且新的提交将成为分支的最新提交。 当 HEAD 指向具体的提交时，它指向一个特定的提交，而不是分支。这种情况被称为"分离 HEAD"。在分离 HEAD 的状态下，如果进行提交，将创建一个匿名分支，该分支不与任何命名分支关联，因此新的提交不会影响其他分支。这种情况下直接在分离 HEAD 上提交可能会导致提交被遗忘，因为没有其他分支引用该提交。 总结起来，HEAD 指向分支时表示当前所在的分支，而HEAD 指向提交时处于分离 HEAD 状态，表示当前位于一个特定的提交上，没有与该提交相关联的分支引用。
+
+- git 远程操作
+
+  - git clone
+  - main 本地仓库
+  - origin/main  远程仓库名/远程分支名  origin默认为远程仓库的名称 缩写o
+    - 远程分支本质上用来反应远程仓库对应分支的状态   远程分支反映了远程仓库在你**最后一次与它通信时**的状态
+  - 如果在本地直接切换到远程仓库 那么HEAD不会指向远程仓库 会成为分离HEAD 此时所有的提交都会提交到一个匿名分支 不会与其他任何分支有关联
+
+- git fetch
+
+  - 远程分支本质上用来反应远程仓库的状态   但是不会自动更新 可能会与远程有所差别 那么单独更新远程仓库分支 就需要用到git fetch
+  - 当远程仓库获取数据时 远程分支也会更新以反应远程仓库的状态 
+  - 本质上git fetch就是将本地仓库的远程分支更新成远程仓库对应分支的最新状态
+  - git fetch不会更改你本地仓库的状态 也不会更新你本地的main分支 也不会修改磁盘上的文件
+  - git fetch 只是单纯将更新下载下来了 并没有合并
+  - 适用git fetch 将更新下载到了远程分支上 我们只需要将该远程分支上的更新合并到本地仓库的分支即可 比如适用 git merge
+
+- git cherry-pick 针对于单个提交
+
+- git rebase 和git merge针对整个分支的提交
+
+- git pull
+
+  - = git fetch + git merge
+
+- git push
+
+  - 与git pull相反
+  - push有一些行为设定 与push.default文件有关
+
+- 一般会在 feather的特性分支上工作!
+
+- rebase和merge的优缺点
+
+  - rebase整洁 但是由于会修改提交树 会将提交记录早的记录放在晚的记录之后
+  - rebase会有多个提交合并 但是会保留提交历史
+
+- 远程仓库分支与本地远程仓库分支关联
+
+  - 本地分支是如何与远程分支关通过remote tracking进行关联
+
+  - git clone时会将这种关系进行绑定 
+
+  - git clone时首先会把远程仓库中分支都会在本地仓库创建对应远程分支
+
+    然后会默认创建一个本地分支main用来跟踪本地的远程分支
+
+  - 所以 git clone时 会输出 local branch "main" set to track remote branch "o/main"
+
+  - 这种隐式关联会设置push目的地和pull的目标
+
+- 指定remote tracking
+
+  - git checkout -b feature origin/main
+    - 此时创建一个分支feature 它跟踪 远程分支 origin/main
+  - git brnach -u origin/main 在当前分支执行该命令 就会让当前分支追踪origin/main
+
+- git push remote-name  local-branch-name
+
+  - 想将本地更改推送都某个远程分支 但又不想切换分支 或者是游离HEAD状态 push时指定远程和分支名称进行推送
+  -  git push origin(远程仓库名称) main(本地分支名称) 将main改动推送到到 origin仓库main分支中
+  - 可以在分离HEAD下使用
+
+- git push remote-name  local-branch-name: remote-branch-name
+
+  - git push origin  feature:main
+  - push也可以指定远程仓库的具体分支  比如上面就是将本地分支feature推送到远程的main分支  
+  - 本地分支可以使用相对引用只提交一部分记录 feature^  
+  - 如果指定的远程分支不存在 那么就会创建
+
+- 本地的远程分支其实叫远程追踪分支
+
+  - git clone 会把远程分支的快照保存到本地
+  - 在 Git 中，本地仓库和远程仓库是分开管理的。当你克隆一个远程仓库时，Git 会在本地保存远程仓库的快照。这包括所有分支和标签。本地对远程的追踪是通过 "远程追踪分支" 实现的。
+
+- git fetch 指定参数拉取 跟push类似 但方向相反
+
+  - git fetch origin main :会到远程仓库的main分支进行拉取然后放到本地的o/main上
+    - 该拉取只会下载对应本地远程分支更新 并不会下载其他远程分支  而且也不会合并的对应分支上
+    - git fetch默认下载所有远程分支的更新
+
+  - git fecht origin main:feature  会到远程仓库的main分支拉取并且放到本地的o/feature分支上 如果feature不存在 则会进行创建
+    - 拉取指定分支 合并到指定分支
+  - git push 指定参数的危险用法!
+    - git push origin  :foo   把空推送到foo分支 这会删除远程分支foo!
+    - git fetch origin   foo:  这会在本地创建foo分支
+  - git pull本质上就是在git fetch后面加git merge 所有参数通用
+    - git pull origin foo = git fetch origin foo + git merge origin/foo
+    - git pull origin bar-1:bugfix = git fetch origin bar~1:bugFix + git merge bugFix
+  - git pull 最终会合并到当前分支里
+  - git pull origin main:feature
+    - 如果feature不存在则会创建 然后拉取main分支最新 然后把合并到feature里面 然后再合并到当前分支
