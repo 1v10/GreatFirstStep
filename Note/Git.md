@@ -300,8 +300,7 @@
   - git fetch origin main :会到远程仓库的main分支进行拉取然后放到本地的o/main上
     - 该拉取只会下载对应本地远程分支更新 并不会下载其他远程分支  而且也不会合并的对应分支上
     - git fetch默认下载所有远程分支的更新
-
-  - git fecht origin main:feature  会到远程仓库的main分支拉取并且放到本地的o/feature分支上 如果feature不存在 则会进行创建
+- git fecht origin main:feature  会到远程仓库的main分支拉取并且放到本地的o/feature分支上 如果feature不存在 则会进行创建
     - 拉取指定分支 合并到指定分支
   - git push 指定参数的危险用法!
     - git push origin  :foo   把空推送到foo分支 这会删除远程分支foo!
@@ -312,3 +311,53 @@
   - git pull 最终会合并到当前分支里
   - git pull origin main:feature
     - 如果feature不存在则会创建 然后拉取main分支最新 然后把合并到feature里面 然后再合并到当前分支
+  - 文件的几种状态
+    - Untracked:未跟踪 指在工作目录存在 但不在上一次的快照记录 也不再之前的提交中 也没有在忽略列表中
+    - Tracked:已跟踪 已经纳入了版本控制的文件 存在于上一次的提交快照中 这些文件的状态可以是 未修改  已修改 或者已经放入暂存区
+      - Unmodified 未修改   自上次提交以来没有修改
+      - Modified 已修改 针对一个已经跟踪的文件进行了修改 但还没有提交到暂存区 文件状态未已修改 但还没有准备好提交
+      - Staged 已暂存
+        - 执行git add命令后 标记为已暂存 已经将新的变动包含在下一次提交中 整个阶段的信息存储在暂存区
+  - 工作目录:用户实际操作和编辑文件的地方
+  - git 暂存区 是存在于工作目录和git仓库之间的中间层 用来存储你准备好到下一个提交中的更改  就是组织你即将提交的更改的地方
+    - git add就是把文件加入暂存区 代表 我认为这些已经准备好称为下一个提交的一部分了
+  - 当执行git commit会将暂存区内容转到仓库 生成一个新的快照 提交的内容是暂存区的内容 而不是工作目录 如果你修改了文件而没有git add 则不会提交
+  - 暂存区容许用户检查他们即将提交的更改
+  
+- git 仓库
+
+  - 存储项目和所有历史版本的地方
+
+- GIT客户端为什么可以直接提交不用git add?
+
+  - 因为git用图形界面让你选择你想要提交的文件 无论是新增还是修改 删除 这一步本质上就在执行git add 但在用户界面上是一个选择 并非添加动作
+
+- git config --list可以查看当前git配置
+
+  - git config  --global user.name ''
+  - git config --global user.email ''
+    - global  用户配置 针对不同用户设置
+    - systeam 系统配置 所有用户
+    - project   项目配置
+
+- git 配置第三方比较软件
+
+  - 需要体现配置该软件的Path路径
+
+  - #### 1、配置merge工具
+
+     git config --[global](https://so.csdn.net/so/search?q=global&spm=1001.2101.3001.7020) merge.tool winmerge
+
+     git config --global mergetool.winmerge.path "C:\Program Files (x86)\WinMerge\WinMergeU.exe"
+
+    #### 2、配置diff工具
+
+     git config --global diff.tool winmerge
+
+     git config --global difftool.winmerge.path "C:\Program Files (x86)\WinMerge\WinMergeU.exe"
+
+  - 使用方式
+
+    - git mergetool 文件名
+    - git difftool 文件名 
+
