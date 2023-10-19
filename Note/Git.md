@@ -360,4 +360,10 @@
 
     - git mergetool 文件名
     - git difftool 文件名 
+    
+  - [ChatGPT Next Web](https://chatgpt.nextweb.fun/#/chat)
+  
+  - https://beta.cdn.api.sa.ai.bkgc.tech/v1
+  
+  - sk-tJXZtqBofV0GYjYf2c371e3f5zhanglongqiang3A94e39Ad5aC40e940aC4C0
 
