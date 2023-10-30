@@ -149,7 +149,9 @@
 
     这里使用的是Vim编辑器!
 
-    https://juejin.cn/post/7050705771218075684
+    VIM:https://www.freecodecamp.org/chinese/news/vim-editor-modes-explained/
+
+    git rebase合并提交记录 :https://juejin.cn/post/7050705771218075684
 
      Enter:进入编辑模式
 
@@ -158,7 +160,7 @@
     :wq 保存后退出
 
     :wq! 强制保存后退出
-
+    
      之后会进行编辑注释 提交即可
 
 - Cherry pick 将指定的提交记录提交到其他分支
