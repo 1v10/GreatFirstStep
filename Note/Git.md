@@ -302,6 +302,7 @@
   - git fetch origin main :会到远程仓库的main分支进行拉取然后放到本地的o/main上
     - 该拉取只会下载对应本地远程分支更新 并不会下载其他远程分支  而且也不会合并的对应分支上
     - git fetch默认下载所有远程分支的更新
+  
 - git fecht origin main:feature  会到远程仓库的main分支拉取并且放到本地的o/feature分支上 如果feature不存在 则会进行创建
     - 拉取指定分支 合并到指定分支
   - git push 指定参数的危险用法!
@@ -368,4 +369,18 @@
   - https://beta.cdn.api.sa.ai.bkgc.tech/v1
   
   - sk-tJXZtqBofV0GYjYf2c371e3f5zhanglongqiang3A94e39Ad5aC40e940aC4C0
+  
+- 关于不同状态恢复代码
 
+    - 没有add添加进版本控制
+        - checkout 文件名 检出最新的该文件丢弃本地修改
+        - checkout . 检出所有
+    - 已经add添加进暂存区 已暂存状态 staged 但还没有commit
+        - reset HEAD 文件名
+        - reset HEAD . 重置当前所有目录
+        - reset --hard 重置所有
+    - 已经commit到本地仓库
+        - reset --hard commitID 
+        - revert  commitID 会产生一个新提交 撤回之前的变更
+
+ 
