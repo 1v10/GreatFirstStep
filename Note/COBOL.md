@@ -1,99 +1,106 @@
 ## COBOL
 
+#### 背景
+
+- 为国防领域和金融领域而设计 因为其先进的文件处理 所以其可以处理文件和大量数据  也可以处理数据库
+- 结构化语言 有不同区域的划分
+
 - CoBol的执行:在线执行网站:[cobol代码在线运行 (lddgo.net)](https://www.lddgo.net/code/runcode/cobol)
+- [在线工具大全 (lddgo.net)](https://www.lddgo.net/) 
 
-  - [在线工具大全 (lddgo.net)](https://www.lddgo.net/) 
-  - 编写好COBOL代码,会有对应的JCL(与MainFrame交互的命令)
-  - 代码在CBL文件夹,以CBL结尾,执行文件在JCL文件夹,以JCL结尾
-  - 右键想运行的CBL对应的JCL:点击Submit JOB即可
+### Cobol VScode环境配置
 
-  ![image-20230611182419693](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824734.png)
+- 编写好COBOL代码,会有对应的JCL(与MainFrame交互的命令)
+- 代码在CBL文件夹,以CBL结尾,执行文件在JCL文件夹,以JCL结尾
+- 右键想运行的CBL对应的JCL:点击Submit JOB即可
 
-  - 此时在VSCODE JOS视图可以看到相对应的运行结果 会以文件形式出现,查看各个文件内容即可,如DISPLAY语法显示如下
+![image-20230611182419693](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824734.png)
 
-  - ![image-20230611182439246](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824288.png)
+- 此时在VSCODE JOS视图可以看到相对应的运行结果 会以文件形式出现,查看各个文件内容即可,如DISPLAY语法显示如下
 
-  - 使用命令行执行:Zowe CLI
+- ![image-20230611182439246](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824288.png)
 
-    - 环境配置文件确认判断
+- 使用命令行执行:Zowe CLI
+
+  - 环境配置文件确认判断
+
+  ```cobol
+  	zowe config list --locations
+  ```
+
+  - 一下命令可以确认是否连接到Z/OS 
+
+  ```
+  zowe zosmf check status
+  ```
+
+  - 列出相关文件
 
     ```cobol
-    	zowe config list --locations
+    zowe files list ds "文件名.*"
     ```
 
-    - 一下命令可以确认是否连接到Z/OS 
+  - 下载文件到本地
 
     ```
-    zowe zosmf check status
+    zowe fukes downliad am "Z95526.JCL" -e "JCL"
     ```
 
-    - 列出相关文件
+  - 提交JCL:可以直接看到输出结果
 
-      ```cobol
-      zowe files list ds "文件名.*"
-      ```
+    ```
+    zowe jobs submit ds "Z95526.JCL(HELLO)" --vasc
+    ```
 
-    - 下载文件到本地
+  - 提交并下载文件
 
-      ```
-      zowe fukes downliad am "Z95526.JCL" -e "JCL"
-      ```
+    ```
+    zowe jobs submit ds "Z99998.JCL(HELLO)" -d.
+    ```
 
-    - 提交JCL:可以直接看到输出结果
+  - 逐步提交以查看各个执行文件
 
-      ```
-      zowe jobs submit ds "Z95526.JCL(HELLO)" --vasc
-      ```
+    ```
+    	zowe jobs submit ds "Z99998.JCL(HELLO)" --wfo
+    ```
 
-    - 提交并下载文件
+    - 以上命令执行完会得到一个JOBID
 
-      ```
-      zowe jobs submit ds "Z99998.JCL(HELLO)" -d.
-      ```
+    ```
+    	zowe jobs view sfbi JSBID 
+    ```
 
-    - 逐步提交以查看各个执行文件
-
-      ```
-      	zowe jobs submit ds "Z99998.JCL(HELLO)" --wfo
-      ```
-
-      - 以上命令执行完会得到一个JOBID
+    - 上一步返回具体的各个运行文件 通过以下命令可以具体查看
 
       ```
-      	zowe jobs view sfbi JSBID 
+      zowe jobs view sfbi JOBID 具体文件
       ```
 
-      - 上一步返回具体的各个运行文件 通过以下命令可以具体查看
+  - 使用node.js自动化编译、提交、运行
 
-        ```
-        zowe jobs view sfbi JOBID 具体文件
-        ```
+    - 在当前文件夹输入
 
-    - 使用node.js自动化编译、提交、运行
+      ```javascript
+      npm init
+      ```
 
-      - 在当前文件夹输入
+    - 返回到VS的正常打开文件视图,可以看到有一个PACKAGE.json文件, 在scripts中即可配置我们对应命令所执行的简略命令
 
-        ```javascript
-        npm init
-        ```
+      ![image-20230611184955410](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111849447.png)
 
-      - 返回到VS的正常打开文件视图,可以看到有一个PACKAGE.json文件, 在scripts中即可配置我们对应命令所执行的简略命令
+    - 回到ZOWE EXPLODRE 此时修改HELLO.cbl的display文字,然后可以直接使用NPM命令,提交编译
 
-        ![image-20230611184955410](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111849447.png)
-
-      - 回到ZOWE EXPLODRE 此时修改HELLO.cbl的display文字,然后可以直接使用NPM命令,提交编译
-
-    
-
-- 关联文件
   
+  
+- 关联文件
+
   - .COBOL
   - .CBL
   - .COB
   - .COBCOPY
   - .COPYBOOK
 - .COPY
-  
+
 - VSCO相关技巧
 
   - CTRL+G 输入行号 可导航至该行代码
@@ -146,16 +153,47 @@
   - section:节,包含多个段落
     - 处理逻辑的细分
   - division:部,包含多个节
+  - program:程序自身
+  - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031555890.png" alt="image-20240303155459726" style="zoom:50%;" />
 
 - 四个部
 
-  - 标识部:程序标识
-  - 环境部:程序环境配置
-  - 数据部:程序变量,文件声明
-    - 文件节
-    - 工作存储节
-  - 过程部:操作指令
-    - 是程序完成工作的地方,statements便在此处,
+  - Identification Divesion 标识部:程序标识 用来程序相互识别 其实类似于类名
+    - 比如程序ID(必须项) 作者之类
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031952906.png" alt="image-20240303195232862" style="zoom:50%;" />
+  - Environment Division 环境部:程序环境配置 
+    - Input-Output Section:指定环境 的输入输出文件 以及文件类型等等
+      - 当前程序中文文件名为FILTEN 然后与物理文件DDNAME关联 该句用来告诉JCL当前 逻辑文件名与那个物理文件关联
+        - JCL:IBM大型机系统级别语言 作业控制语言 用来管理和调度大型机上的作业
+      - 下面一行SEQUENTIAL表示文件中的记录是连续的  文件的组织方式
+        - 文件的组织方式指的是文件中记录的排列方式和组织结构。在计算机中，常见的文件组织方式包括：
+          - 顺序组织（Sequential Organization）：文件中的记录按照它们在文件中出现的顺序依次排列，记录之间没有直接的逻辑链接关系。顺序组织的文件通常用于顺序访问，即从文件的开始处逐条读取记录。
+          - 索引组织（Indexed Organization）：文件中的记录按照某种顺序排列，并且每个记录都有一个对应的索引项，索引项存储了记录在文件中的位置信息。通过索引项，可以快速地定位和访问文件中的记录，而不需要顺序地扫描整个文件。
+          - 随机组织（Random Organization）：文件中的记录存储在按照记录键值（Key）排序的区域中，每个记录都有一个唯一的键值。随机组织的文件允许根据记录的键值直接访问和检索记录，而不需要进行顺序查找。
+      - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031958355.png" alt="image-20240303195858314" style="zoom:50%;" />
+    - Configuration Section:提供有关编写和执行的系统信息
+      - 比如以下SOURCE指的是 编写和指定源代码的计算机 OBJECT指的是执行的计算机
+      - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031955949.png" alt="image-20240303195504907" style="zoom:50%;" />
+  - Data division 数据部:程序变量,文件内容
+    - File Section 文件节 定义文件的记录结构
+      - 如下图针对上边定义的文件 进行了PIC内容的定义 定义文件的内容为一个A(字母字符 A-Z,a-z) 长度为25
+      - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403032008091.png" alt="image-20240303200838038" style="zoom:50%;" />
+    - 以下三个节 分别定义了三个区域的变量 定义方式没有太大区别 主要是用法和生命周期
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403032024623.png" alt="image-20240303202405564" style="zoom:50%;" />
+    - Working-Storage section 工作存储节 定义程序中内部使用的变量  程序启动时分配内容 
+    - Local-Storage section:定义的是某个特定部分的变量  局部变量 程序每次调用时都会分配内存和初始化变量 
+    - Linkage section:用于定义程序与程序之间传递数据的变量 生命周期由另一个程序控制  link区 容许一个程序访问另一个程序的数据区 或者接受从调用程序传递过来的参数 
+      - 数据交换不一定适用该途径
+      - copy命令可以引入外部文件定义的代码段  这些外部 文件通常包含数据结构定义 常量生命等 被存放在单独的文件中以便多个程序共用 
+      - 虽然 copy文件本身不负责数据的直接传递 但他保证了 数据交换双方使用一致的数据结构  实际的数据可以通过数据库或者外部存储完成  一个程序可以将数据写入一个共享文件 另一个程序读取 
+      - copy文件 .cpy  本身就是定义数据布局或者常量  可以在多个程序之间共享代码和数据布局 里面的定义会被插入到该语句所在位置 类似于其他语言的import或者suing避免了代码重复, 使用`COPY`语句引入的代码就好像是直接写在主程序文件中一样
+      - 插入布局的操作是由编译阶段 编译器完成的
+  - Procedure division 过程部:操作指令  
+    - 是程序完成工作的地方,statements便在此处
+    - 包含程序的逻辑 使用由数据区定义的变量的可执行语句组成
+    - 段落和节名由用户自定义 
+    - 例如以下  我们在过程部编写 逻辑区域 打印Hello World!
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403032040376.png" alt="image-20240303204044327" style="zoom:50%;" />
 
 - JCL:负责与z/OS交互,包括让编译代码, 让z/OS执行
 
@@ -164,6 +202,67 @@
   ```java
   zowe plugins install @zowe/secure-credential-store-for-zowe-cli
   ```
+
+#### 基本语法
+
+- 字符:一共有78个单字符 大小写字母 各种符号等
+
+  - <img src="C:%5CUsers%5CPhelop%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240304215817097.png" alt="image-20240304215817097" style="zoom:50%;" />
+
+- 格式：cobol的字符必须以某种格式书写 cobol的列都具体特定的含义
+
+  - 1-6列:行号列
+  - 7列:注释列 如果该列有*号 代表该行是注释行
+  - 8-11列:Cobol的 division section paragraphs和一些特殊的条目必须在该列开始！
+  - 12-72列：所有的COBOL语句必须在B区开始
+  - 73-80列：标识区域　根据程序员需要使用
+
+- 字符串
+
+  - 字符串由单个字符组成
+  - 所有字符串必须有分隔符
+  - 分隔符用于分割字符串
+  - 常用分隔符：空格，逗号，句号，撇号，左右括号，引号
+  - 一个字符串可以是注释　也可也是关键词　也可以是文字
+
+- 程序中有一些名称是保留字　不能当作名称！
+
+- 变量定义：
+
+  - 级别编号　数据名称　Picutre-Clause Value-Clause
+
+    - CLAUSE:子句 代表PIC定义的子句 指定特定属性和行为 定义数据项的格式 告知编译器数据应该是什么样子的 例如X代表一个字母 9代表一个数字
+
+  - 级别编号:用于指定记录中的数据级别,用于区分基本项目和组项目,因此会有两种类型的项目
+
+    - 简单理解就是单个变量 和集合变量
+
+    - 01:记录描述级别
+
+      - 定义数据,文件,表结构 可以决定是一个组项目还是基本项目  是数据的最外层结构
+
+    - 02~49:组和基本项目
+
+      - 01 BASIC1 PIC 9(3) 
+
+    - 66:重名名子句 可以用来重命名某些数据项
+
+    - 77:用于定义顶层的数据项或组。它是最高级别的数据定义级别
+
+    - 88:定义条件名 容许在程序中为 某些条件指定名称 并根据条件进行条件判断
+
+      ```cobol
+      88 IS-REGISTERED VALUE 'R'.
+      88 IS-DROPPED    VALUE 'D'.
+            
+      IF STUDENT-STATUS IS REGISTERED
+          DISPLAY 'This student is registered.'
+      ELSE IF STUDENT-STATUS IS DROPPED
+          DISPLAY 'This student has dropped the course.'
+      END-IF.
+      ```
+
+      
 
 - 变量/数据项
 
@@ -428,18 +527,18 @@
     - Function 函数名(参数)
     
   - 子程序调用
-  
+
     - CALL 目标程序引用(可以是变量也可以是固定值)
     - using 指定调用子程序传递的参数(默认按照引用传递:即修改对调用者可见)
       - BY CONTENT可以指定传递变量的副本,此时修改对调用者不可见
         - BY VALUE 与BY CONTINUE作用相同  但是传递类型只能是基本数据类型
     - RETURNING 指定返回值, 可选项
-  
+
   - 拷贝库
-  
+
     - 类似于调用子程序 将复用性代码放入拷贝库可以重复调用
     - COPY关键词 将当前代码编译时加入所COPY的代码
     
   - OpenCobolIDE编译截图
-  
+
     - ![image-20231231214901574](https://raw.githubusercontent.com/1v10/Photo/main/photo/202312312149666.png)
