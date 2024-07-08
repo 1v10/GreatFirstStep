@@ -14,91 +14,35 @@
 
 ### Cobol VScode环境配置
 
+- windows安装wsl
+
+  <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202406132209725.png" alt="image-20240613220935587" style="zoom: 67%;" />
+
+- 运行WSL  安装guncobol
+
+  ```
+  sudo apt-get install gnubol
+  ```
+
+- 安装vscode到windwos
+
+  - 安装完成后安装WSL拓展
+
+- 在WSL系统 输入code . 即可通过WSL打开VSCODE!
+
+- 写完程序在命令行中使用cobc -x   test.cbl编译 编译完后会有一个test文件 ./test执行即可!
+
+  - ![image-20240615191406933](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406151914038.png)
+
 - 显示代码内部执行过程
+  
   - 按照该拓展 COOBL代码内右键选择Generate Cobol Control Flow
   - ![image-20240404112112068](https://raw.githubusercontent.com/1v10/Photo/main/photo/202404041123743.png)
+  
 - 编写好COBOL代码,会有对应的JCL(与MainFrame交互的命令)
+
 - 代码在CBL文件夹,以CBL结尾,执行文件在JCL文件夹,以JCL结尾
-- 右键想运行的CBL对应的JCL:点击Submit JOB即可
 
-![image-20230611182419693](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824734.png)
-
-- 此时在VSCODE JOS视图可以看到相对应的运行结果 会以文件形式出现,查看各个文件内容即可,如DISPLAY语法显示如下
-
-- ![image-20230611182439246](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111824288.png)
-
-- 使用命令行执行:Zowe CLI
-
-  - 环境配置文件确认判断
-
-  ```cobol
-  	zowe config list --locations
-  ```
-
-  - 一下命令可以确认是否连接到Z/OS 
-
-  ```
-  zowe zosmf check status
-  ```
-
-  - 列出相关文件
-
-    ```cobol
-    zowe files list ds "文件名.*"
-    ```
-
-  - 下载文件到本地
-
-    ```
-    zowe fukes downliad am "Z95526.JCL" -e "JCL"
-    ```
-
-  - 提交JCL:可以直接看到输出结果
-
-    ```
-    zowe jobs submit ds "Z95526.JCL(HELLO)" --vasc
-    ```
-
-  - 提交并下载文件
-
-    ```
-    zowe jobs submit ds "Z99998.JCL(HELLO)" -d.
-    ```
-
-  - 逐步提交以查看各个执行文件
-
-    ```
-    	zowe jobs submit ds "Z99998.JCL(HELLO)" --wfo
-    ```
-
-    - 以上命令执行完会得到一个JOBID
-
-    ```
-    	zowe jobs view sfbi JSBID 
-    ```
-
-    - 上一步返回具体的各个运行文件 通过以下命令可以具体查看
-
-      ```
-      zowe jobs view sfbi JOBID 具体文件
-      ```
-
-  - 使用node.js自动化编译、提交、运行
-
-    - 在当前文件夹输入
-
-      ```javascript
-      npm init
-      ```
-
-    - 返回到VS的正常打开文件视图,可以看到有一个PACKAGE.json文件, 在scripts中即可配置我们对应命令所执行的简略命令
-
-      ![image-20230611184955410](https://raw.githubusercontent.com/1v10/Photo/main/photo/202306111849447.png)
-
-    - 回到ZOWE EXPLODRE 此时修改HELLO.cbl的display文字,然后可以直接使用NPM命令,提交编译
-
-  
-  
 - 关联文件
 
   - .COBOL
@@ -106,6 +50,7 @@
   - .COB
   - .COBCOPY
   - .COPYBOOK
+  
 - .COPY
 
 - VSCO相关技巧
@@ -171,17 +116,44 @@
   - Environment Division 环境部:程序环境配置 
     - Input-Output Section:指定环境 的输入输出文件 以及文件类型等等
       - 当前程序中文文件名为FILTEN 然后与物理文件DDNAME关联 该句用来告诉JCL当前 逻辑文件名与那个物理文件关联
+        
         - JCL:IBM大型机系统级别语言 作业控制语言 用来管理和调度大型机上的作业
+        
       - 下面一行SEQUENTIAL表示文件中的记录是连续的  文件的组织方式
+
         - 文件的组织方式指的是文件中记录的排列方式和组织结构。在计算机中，常见的文件组织方式包括：
           - 顺序组织（Sequential Organization）：文件中的记录按照它们在文件中出现的顺序依次排列，记录之间没有直接的逻辑链接关系。顺序组织的文件通常用于顺序访问，即从文件的开始处逐条读取记录。
           - 索引组织（Indexed Organization）：文件中的记录按照某种顺序排列，并且每个记录都有一个对应的索引项，索引项存储了记录在文件中的位置信息。通过索引项，可以快速地定位和访问文件中的记录，而不需要顺序地扫描整个文件。
           - 随机组织（Random Organization）：文件中的记录存储在按照记录键值（Key）排序的区域中，每个记录都有一个唯一的键值。随机组织的文件允许根据记录的键值直接访问和检索记录，而不需要进行顺序查找。
+
       - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031958355.png" alt="image-20240303195858314" style="zoom:50%;" />
+
+      - 如果文件的组织方式描述不正确 那么处理时出现混乱
+
+        - 本来是LINE SEQUENTIAL 却写成了SEQUENTIAL
+
+          ![image-20240707203151699](https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072031814.png)
+
+        ```cobol
+        	   SELECT EMPLOYEEFILE ASSIGN TO "EMPLOYEES.DAT"
+        		ORGANIZATION IS  SEQUENTIAL.
+        ```
+
+        - 导致后续打印输出时显示错乱
+
+          <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072032473.png" alt="image-20240707203254401"  />
+
+      - 正确形式
+
+        ![image-20240707203335222](https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072033293.png)
+
     - Configuration Section:提供有关编写和执行的系统信息
+      
       - 比如以下SOURCE指的是 编写和指定源代码的计算机 OBJECT指的是执行的计算机
       - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403031955949.png" alt="image-20240303195504907" style="zoom:50%;" />
   - Data division 数据部:程序变量,文件内容
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161623358.png" alt="image-20240616162356210" style="zoom: 33%;" />
+    - <img src="C:%5CUsers%5CPhelop%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240616162512217.png" alt="image-20240616162512217" style="zoom: 33%;" />
     - File Section 文件节 定义文件的记录结构
       - 如下图针对上边定义的文件 进行了PIC内容的定义 定义文件的内容为一个A(字母字符 A-Z,a-z) 长度为25
       - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202403032008091.png" alt="image-20240303200838038" style="zoom:50%;" />
@@ -300,15 +272,53 @@
 
   - 关键词:PIC 决定变量长度和类型
 
+    - 在处理数值类型 如果值大于定义的范围 会溢出丢失数据 不会报错
     - PIC 9 长度为1的单个数值
     - PIC 9(4) 长度为4的四个数值
     - PIC X 单个字母数字
     - PIC X(4) 四个字母数字
     - PIC 9(2)V9 V代表小数点: 10.9
 
+  - 关于COBOL小数与其他语言小数的区别
+
+    - 定点数:COBOL
+      - 定点小数:
+        - 定点小数位表示小数 小数点隐含在首字母之后
+          - ![image-20240616165247174](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161652237.png)
+        - 0.875 → 二进制:0.111 → 存储形式:01110000
+        - -0.875 → 二进制:0.111 → 存储形式:11110000
+      - 定点整数:加的0为符号 小数 默认在尾部
+        - 30 → 二进制11110  → 符号位 011110 → 存储形式00011110
+        - -30 → 二进制11110  → 符号位 111110 → 存储形式10011110
+        - ![image-20240528202837556](https://raw.githubusercontent.com/1v10/Photo/main/photo/202405282028682.png)
+      - 浮点数:现代语言 比如Java C# 稍微复杂些 存储的不是原数据 但注意C#Decimal与COBOL相同!
+      - 112.5 → 类似科学计数法 用10的指数表达  1.125 *  10 ^2  此时存储的是三种数 符号位 由整数前方符号决定 本例为整数为0  阶码:存储的指数 本例存储的是2  尾数存储的125 即小数点后面的数 就是真正的小数 实际上并非直接存 而是增加了偏移量 用来区分正指数和负指数
+        - 由于浮点数的尾数是固定的 所以无法表达所有小数 比如无限小数
+        - ![image-20240528202705159](https://raw.githubusercontent.com/1v10/Photo/main/photo/202405282027363.png)
+      - 双精度浮点阶码和尾数存储空间变大 精度更高
+        - ![image-20240528202751871](https://raw.githubusercontent.com/1v10/Photo/main/photo/202405282027259.png)
+
   - 除了X和9还有其他类型,比如A,仅仅只有字母
 
     - cs:货币符号
+
+  - cobol数字默认以display 字符串方式存储:数字 `1234` 将存储为字符形式，即 '1'、'2'、'3'、'4'，每个字符占用一个字节。 适合打印输出  运算时计算机会将其转为对应格式 需要额外开销
+
+    - comp 存储数字的二进制形式 运算速度快 高效存储 
+
+    - comp3 分别存储十进制数字比如1234 就会存储  需要精确数据 因为直接存储的十进制 不会导致某些小数十进制 二进制转换时导致精度丢失 压缩空间场景 
+
+      - 存储结果：0001 0010 0011 0100（共 2 个字节，16 位）。
+
+      - 1 -> 0001
+
+        2 -> 0010
+
+        3 -> 0011
+
+        4 -> 0100
+
+      - 关于十进制转二进制过程中的误差:0.1转成二进制是个无限不循环小数 就必须截断 导致误差 而comp3不会转换二进制 就不会有误差问题
 
   - 变量/数据项的编码在DATA DIVISION中定义
 
@@ -353,22 +363,26 @@
 
   - ADD:加法语法 将两个或两个以上数字相加 并将结果添加到目标变量
 
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161744756.png" alt="image-20240616174423631" style="zoom:50%;" />
     - 语法:ADD A TO C GIVING B 将A加到C上并且将结果赋给B 
     - 如果不写GIVING B  默认赋给C
 
   - Subtract:减法操作 从一个变量中减去一个变量 
 
+    - ![image-20240616174657726](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161746021.png)
     - 语法 类似ADD :   SUBTRACT A FROM B GIVING C 从B中减去A
 
   - Multiply:乘法操作
 
+    - ![image-20240616174901294](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161749471.png)
     - MULTIPLY A BY B GICING E      E = A*B
-    - 与之前语境不太一样 是by 是A*B 而不是之前以B为主了
+    - 与之前语境不太一样 是by 是A*B 而不是之前以B为主了 是以A为主体 结果会放到A中
 
   - Devide:除法操作
 
-    - DEVIDE A BY B GIVING  C REMAINDER  R
-      - 将A除以B 结果放到C中 余数放到R中
+    - ![image-20240616175119716](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406161751987.png)
+    - DEVIDE A INTO B GIVING  C REMAINDER  R
+      - 将B除以A 结果放到C中 余数放到R中
 
   - COMPUTE:通用操作符 可以执行各类复杂运算 直接使用+-*/符号即可
 
@@ -548,6 +562,9 @@
     - 注意 无论什么类型 物理形式上 都是二进制上存储 这里说的是存储前的数据形式 以及逻辑表示和处理方式
       - 比如数字123 如果 我们不指定COMP 默认以DISPLA存储 其会按照相关编码(ASCII) 将数字转为特定编码比如 49 50 51 (二进制 00110001 00110010 00110011)然后进行存储
       - 而如果我们使用123 comp形式存储 将会直接存储123的二进制形式 01111011 二进制更加紧凑高效
+    - 打印字符格式化 可以设置各类输出字符的形式比如价格美元符号
+      - ![image-20240616203855398](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406162038546.png)
+      - ![image-20240616204106707](C:%5CUsers%5CPhelop%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240616204106707.png)
 
   - Copybooks
 
@@ -895,10 +912,18 @@
     - 重复执行一个段落 直到给定条件为真  类似于 do-while 执行过一次 检查是否继续执行
 
       ```
-      PREFORM [段落名] UNTIL 条件
+      PREFORM  UNTIL 条件
       	[COBOL语句]
       END PREFORM
       ```
+
+    - 外部Preform:
+
+      ```
+      PREFORM  [段落名] UNTIL 条件.
+      ```
+
+      
 
     - 需要重复执行某些段落时  使逻辑更简洁
 
@@ -911,6 +936,16 @@
       ```cobol
       PERFORM 段落名 次数 TIMES
       ```
+      
+    - 内部PERFORM
+
+      ```
+      PERFORM  次数 TIMES
+           [COBOL语句]
+      END-PERFORM 
+      ```
+
+      
 
   - PERFORM VARYING
 
@@ -934,8 +969,13 @@
     - 有条件跳转:根据变量值选择跳转的段落
 
       - GO TO  段落1,段落2, DEPENDING ON 变量名1
+  - 值是1则执行段落1,值是2则执行段落2
+    
+  - COBOL默认以顺序执行:如图所示 如果执行完 PERFORM 0200-PROCESS-RECORDS UNTIL ENDOFFILE.此时读取完毕文件 没有结束语句会执行下面的段落 继续执行读取 导致错误 读取完毕需要提前调用其他段落结束
 
-      - 值是1则执行段落1,值是2则执行段落2
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072037977.png" alt="image-20240707203753889"  />
+
+  - ![image-20240707203857919](https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072038077.png)
 
   - 示例程序
 
@@ -1017,6 +1057,8 @@
   - 表声明
 
     - 相同数据项的集合,COBOL中的数组被称为表(tables)
+
+      - 与其他语言不同的是 COBOL中的表下标从1开始 不是0!!
 
     - 表是线性集合 相同类型数据项的集合
 
@@ -1595,6 +1637,11 @@
 
   - 连接之后的字符串会放在WS-STRING里面
 
+  - 可以指定目标字符串的特定位置插入拼接结果
+
+    - str1="6" str2=3  目标字符串是str3=aa 如果此时指定2那么a63 从第二个位置开始插入拼接字符串
+    - 类似c#的 str.insert(startIndex,str)
+
 - UNSTRING
 
   - 拆解字符串
@@ -1736,16 +1783,54 @@
 
 - 文件组织(File Organization)
 
+  - ![image-20240702214351613](https://raw.githubusercontent.com/1v10/Photo/main/photo/202407022143842.png)
+
   - 顺序文件(Sequential File Organization)
     - 按照记录的插入顺序 存储记录 后插入的记录在后
     - 类似于普通文件
-  - 索引顺序文件(Indexed Sequential File Organiztion)
+    - Sequential与line Sequential
+      - Sequential :记录不是按照行区分的 而是整合在一起 根据Layout定义划分
+        - 比如EZ1L001EZ2L003FB1JOO1CF2M001 类似于电文
+        - ![image-20240627213617471](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406272136788.png)
+      - line Sequential:记录按照行区分 顺序分布 类似于数据库的表
+        - EZ1L001
+        - EZ2L003
+        - FB1J001
+        - ![image-20240627213637083](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406272136182.png)
+
+  - 顺序文件插入或者删除时需要便利所有记录创建新文件 或者访问某个元素需要便利整个记录 这在大数据量时很低效 此时需要随机访问 直接访问元素的组织文件方式出现!(直接访问direct acess) 可以顺序访问也可以直接访问
+
+  - 索引顺序文件(Indexed Sequential File Organiztion) 升序排列
+
     - 在顺序文件的基础上,提供了索引 ,用来定位特定记录
     - 类似于数组
 
-  - 相对文件组织(Relative File Organization)
+  - 相对文件组织(Relative File Organization) 相对记录编号升序排列
+
+    - <img src="https://raw.githubusercontent.com/1v10/Photo/main/photo/202407022147176.png" alt="image-20240702214735027" style="zoom: 33%;" />
+
+    - 由于相对文件组织是相对于文件的起始位置  所以称为 相对组织 使用相对记录编号来记录位置
+
+    - 如图所示 相对文件组织都是有偏移量的 每个偏移量就是记录的长度  比如编号4 直接4*记录长度 即可
+
+    - 相对文件无法直接生成 需要使用 程序生成 读取顺序文件生成相对记录文件
+
+      - 生成之后也无法直接查看  需要另一个程序读取...
+      - 
+
     - 记录存储时分配编号 编号决定存储文字 可以通过编号访问特定记录
-    - 类似与Hashmap
+
+    - 声明相对记录文件
+
+      ```cobol
+      	   SELECT STUDIOSFILE ASSIGN TO "STUDIOSREL.DAT"
+              FILE STATUS IS FILE-CHECK-KEY
+      		ORGANIZATION IS RELATIVE
+      		ACCESS MODE IS SEQUENTIAL
+      		RELATIVE KEY IS STUDIOS-KEY.
+      ```
+
+      - 关键是RELATIVE KEY  这是访问相对记录的关键字段  需要定义为数字
 
 - 文件访问模式(File Acess)
 
@@ -1963,6 +2048,26 @@
     - 调用后调用程序将停止执行,知道被调用程序执行完毕
     - EXIT PROGRAM 语句用户将控制从被调用程序转移回调用程序
 
+  - 编译事项
+
+    - 注意使用gnucobol编译时 子程序编译的命令不一样!  需要把子程序编译为可加载模块!!
+
+      ```cobol
+      cobc -m test.cbl
+      ```
+
+      - 否则会报错:在 GNU COBOL 中，出现 "executable program requested but PROCEDURE/ENTRY has USING clause" 错误是因为包含 `USING` 子句的程序不能被编译为可执行文件（使用 `-x` 选项）。这种程序需要被编译为可加载模块（使用 `-m` 选项）。
+
+        ![image-20240707213814840](https://raw.githubusercontent.com/1v10/Photo/main/photo/202407072138926.png)
+
+    - 一般程序
+
+      ```cobol
+      cobc -x  general.cbl
+      ```
+
+      
+
   - Call By Reference (引用调用)
 
     - 调用时传递参数,如果是引用调用,被调用程序修改的参数,那么该值也会反映到调用程序
@@ -2173,19 +2278,54 @@
     - 浮点型
       - V表示小数点位置 并不会存储小数点
     - 整数型
+    
   - 符号类型:S
     - 正负数表达
       - S代表该数值是有符号的,主要用来保存正负数,代表+ -号
       - 若某一个数值不定义符号类型,那么只能存储正数,任何负数,都会转为正数存储
+    
   - 分隔符:,用来分隔多位数字-
+    
     - ** 平方: 2**8 2的8次方
+    
   - 日期格式:通常使用/来分割
+
   - 流程控制语句:IF ELSE
+
   - Switch:EVALUATE WHEN
+
   - 循环:PERFORM UNTIL
+    
     - 表循环语句 PERFORM VARYING UNTIL
+    
   - 排序方法:SORT
+
+    ```cobol
+    		   SORT WORKFILE ON ASCENDING KEY WMAJOR,WSTUDENTLNAME,
+               WSTUDENTFNAME
+    		      USING STUDENTFILE GIVING SORTEDFILE.
+    ```
+
+    - WORKFILE是临时文件 使用SD定义 using是输入文件 giving是输出文件 都用FD定义 KEY是排序关键词 这里有三个 先按照WMAJOR排序,如果一致再按照第二关键词
+
+    - ![image-20240630200724373](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406302007539.png)
+
+    - 多输入文件排序:merge
+
+      - ![image-20240630200854715](https://raw.githubusercontent.com/1v10/Photo/main/photo/202406302008887.png)
+
+    - ```cobol
+      		   MERGE WORKFILE ON ASCENDING KEY 
+        		      WSTUDENT-ID
+        		      USING STUDENTFILE 
+        			    NEWSTUDENTFILE
+        			  GIVING SORTEDFILE.
+      ```
+
+    - 与排序语句没有太大区别 只是关键词变成了MERGE 然后输入文件变成了两个
+
   - 下标与索引的区别:下标就是一个普通的变量,而索引就是系统内部维护的变量
+
   - 定义下标变量可以使用 USAGE IS COMP来提高效率
     - 简写 COMP 以二进制存储数据
     - 计算不懂十进制,也不会数数字,所以都是以二进制存储数据,如果我们定义数据时以二进制定义数据,这样运算速度更快
@@ -2195,6 +2335,7 @@
       - https://juejin.cn/post/7103883401622798350
     - comp4:表示整数
     - comp5:表示整数,但可以指定小数点
+    
   - set语句可以操作索隐变量进行赋值和运算
     - set 索引 TO  数字 代表将索引变量变为后面的数字 
     - set 变量 TO 索引 代表将该变量赋给索引
@@ -2202,8 +2343,11 @@
       - set 索引 UP BY 2 //将会指向便宜2位后的数据
     - 往前偏移2位 偏移数值也可以为变量
       - set 索引 down by 2
+    
   - Search:顺序查找
+
   - SearchAll:二分查找
+
   - 使用DESC.....和ASCE进行表元素排序
 
 - 变长表和定长表
@@ -2314,3 +2458,4 @@
 - OpenCobolIDE编译截图
 
   - ![image-20231231214901574](https://raw.githubusercontent.com/1v10/Photo/main/photo/202312312149666.png)
+
